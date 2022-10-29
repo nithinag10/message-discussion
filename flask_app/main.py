@@ -1,15 +1,13 @@
 import base64
 from flask import Flask, request
 import hashMedia
-import settings
+import database
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello():
-    client = settings.setupMongoDB()
-    print(client)
     return 'Ok'
 
 
@@ -17,7 +15,10 @@ def hello():
 def handleVideo():
     image = request.files["file"]
     image_string = base64.b64encode(image.read())  # encoding image to base64
-    hexa = hashMedia.getMd5Hexa(image_string)
+    hex = hashMedia.getMd5Hexa(image_string) # getting digest
+    collection = database.findCollection() # finding collection
+    if not database.findDocument(collection, hex): # checking if the media already exist
+        database.insertDocument(collection, hex)
     return "DONE boy"
 
 
