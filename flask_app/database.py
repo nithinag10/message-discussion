@@ -1,22 +1,22 @@
-import pymongo
 import settings
-from bson.json_util import dumps, loads
 
 
-def findCollection():
-    return settings.setupMongoDB(database="comments", collection="comments")
+def findCollection(database, collection):
+    return settings.setupMongoDB(database, collection)
 
 
 def findDocument(collection, hex):
     if collection.find_one({'hashvalue': hex}):
         return True
-    else :
+    else:
         return False
 
 
-
-
-def insertDocument(collection , hex):
+def insertDocument(collection, hex):
     record = {"hashvalue": hex}
-    print(collection.insert_one(record))
+    collection.insert_one(record)
 
+
+def insertComment(collection, hex, comment):
+    record = {"hashValue": hex, 'comment': comment}
+    print(collection.insert_one(record))
