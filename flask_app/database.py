@@ -1,4 +1,6 @@
 import settings
+from datetime import datetime
+
 
 
 def findCollection(database, collection):
@@ -18,5 +20,17 @@ def insertDocument(collection, hex):
 
 
 def insertComment(collection, hex, comment):
-    record = {"hashValue": hex, 'comment': comment}
+    now = datetime.now()
+    record = {"hashValue": hex, 'comment': comment, 'date':now}
     print(collection.insert_one(record))
+
+
+def findAllComments(collection , hex):
+    search = { "hashValue" : hex}
+    doc = []
+    for comment in collection.find(search):
+        doc.append({'date':comment.get('date') , 'coment':comment.get('comment')})
+    return doc
+
+
+

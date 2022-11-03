@@ -55,5 +55,13 @@ def bot():
         return respond(f'Please send an image!')
 
 
+@app.route("/panel")
+def handlePanelRequest():
+    digest = request.args.get('hexValue')
+    collection = database.findCollection(database="comments", collection="sub_comments")
+    doc = database.findAllComments(collection, digest)
+    return doc
+
+
 if __name__ == "__main__":
     app.run(debug=True)
