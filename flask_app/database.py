@@ -1,6 +1,7 @@
 import settings
 from datetime import datetime
-
+import json
+from bson import json_util
 
 
 def findCollection(database, collection):
@@ -14,6 +15,10 @@ def findDocument(collection, hex):
         return False
 
 
+def parse_json(data):
+    return json.loads(json_util.dumps(data))
+
+
 def insertDocument(collection, hex):
     record = {"hashvalue": hex}
     collection.insert_one(record)
@@ -21,16 +26,19 @@ def insertDocument(collection, hex):
 
 def insertComment(collection, hex, comment):
     now = datetime.now()
-    record = {"hashValue": hex, 'comment': comment, 'date':now}
+    record = {"hashValue": hex, 'comment': comment, 'date': now, 'parentID':None}
     print(collection.insert_one(record))
 
 
-def findAllComments(collection , hex):
-    search = { "hashValue" : hex}
+def findAllComments(collection, hex):
+    search = {"hashValue": hex}
     doc = []
     for comment in collection.find(search):
-        doc.append({'date':comment.get('date') , 'coment':comment.get('comment')})
+        doc.append(parse_json(comment))
     return doc
 
 
-
+def insertReply(collection, parentID, comment, digest):
+    now = datetime.now()
+    record = {'parentID': parentID, 'comment': comment, 'date': now, 'hashValue': digest}
+    print(collection.insert_one(record))

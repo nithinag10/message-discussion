@@ -63,5 +63,15 @@ def handlePanelRequest():
     return doc
 
 
+@app.route("/reply-comment")
+def handleReplyComment():
+    parentID = request.args.get("commentID")
+    comment = request.args.get("comment")
+    digest = request.args.get("hexValue")
+    collection = database.findCollection(database="comments", collection="sub_comments")
+    database.insertReply(collection, parentID, comment, digest)
+    return "Reply inserted"
+
+
 if __name__ == "__main__":
     app.run(debug=True)
