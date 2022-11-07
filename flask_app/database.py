@@ -26,7 +26,7 @@ def insertDocument(collection, hex):
 
 def insertComment(collection, hex, comment):
     now = datetime.now()
-    record = {"hashValue": hex, 'comment': comment, 'date': now, 'parentID':None}
+    record = {"hashValue": hex, 'comment': comment, 'date': now, 'parentID': None}
     print(collection.insert_one(record))
 
 
@@ -34,7 +34,15 @@ def findAllComments(collection, hex):
     search = {"hashValue": hex}
     doc = []
     for comment in collection.find(search):
-        doc.append(parse_json(comment))
+        record = {}
+        for (key, value) in comment.items():
+            if key == "_id":
+                record['id'] = str(comment[key])
+            elif key == "date":
+                record['date'] = comment[key].isoformat()
+            else:
+                record[key] = comment[key]
+        doc.append(record)
     return doc
 
 

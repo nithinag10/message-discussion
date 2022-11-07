@@ -5,9 +5,10 @@ import database
 import json
 from twilio.twiml.messaging_response import MessagingResponse
 import requests  # request img from web
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/', methods=["GET"])
 def hello():
@@ -72,6 +73,3 @@ def handleReplyComment():
     database.insertReply(collection, parentID, comment, digest)
     return "Reply inserted"
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
