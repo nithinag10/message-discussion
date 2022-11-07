@@ -1,4 +1,4 @@
-import settings
+from flask_app import settings
 from datetime import datetime
 import json
 from bson import json_util

@@ -1,7 +1,7 @@
 import base64
 from flask import Flask, request
-import hashMedia
-import database
+from flask_app import hashMedia
+from flask_app import database
 import json
 from twilio.twiml.messaging_response import MessagingResponse
 import requests  # request img from web
