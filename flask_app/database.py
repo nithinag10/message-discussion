@@ -2,6 +2,8 @@ from flask_app import settings
 from datetime import datetime
 import json
 from bson import json_util
+import json
+import bson
 
 
 def findCollection(database, collection):
@@ -24,10 +26,20 @@ def insertDocument(collection, hex):
     collection.insert_one(record)
 
 
-def insertComment(collection, hex, comment):
+def insertComment(collection, hex, comment, name):
     now = datetime.now()
-    record = {"hashValue": hex, 'comment': comment, 'date': now, 'parentID': None}
-    print(collection.insert_one(record))
+    inserting_id = bson.objectid.ObjectId()
+    record = {"hashValue": hex, 'comment': comment, 'date': now, 'parentID': None, "name": name, "_id": inserting_id}
+    collection.insert_one(record)
+    response = {}
+    for (key, value) in record.items():
+        if key == "_id":
+            response['id'] = str(record[key])
+        elif key == "date":
+            response['date'] = record[key].isoformat()
+        else:
+            response[key] = record[key]
+    return response
 
 
 def findAllComments(collection, hex):
@@ -46,7 +58,17 @@ def findAllComments(collection, hex):
     return doc
 
 
-def insertReply(collection, parentID, comment, digest):
+def insertReply(collection, parentID, comment, digest, name):
     now = datetime.now()
-    record = {'parentID': parentID, 'comment': comment, 'date': now, 'hashValue': digest}
-    print(collection.insert_one(record))
+    inserting_id = bson.objectid.ObjectId()
+    record = {'parentID': parentID, 'comment': comment, 'date': now, 'hashValue': digest, "_id":inserting_id, 'name':name}
+    collection.insert_one(record)
+    response = {}
+    for (key, value) in record.items():
+        if key == "_id":
+            response['id'] = str(record[key])
+        elif key == "date":
+            response['date'] = record[key].isoformat()
+        else:
+            response[key] = record[key]
+    return response
