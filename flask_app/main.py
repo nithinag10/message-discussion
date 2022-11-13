@@ -53,16 +53,18 @@ def bot():
     sender = request.form.get('From')
     message = request.form.get('Body')
     media_url = request.form.get('MediaUrl0')
+    print(message)
     print(f'{sender} sent {message}')
     if media_url:
         image_string = requests.get(media_url).content
         hex = hashMedia.getMd5Hexa(image_string)  # getting digest
-    else:
-        hex = hashMedia.getMd5Hexa(message.encode('utf-8')) # getting digest from text message
-    collection = database.findCollection(database="comments", collection="comments")  # finding collection
-    if not database.findDocument(collection, hex):  # checking if the media already exist
-        database.insertDocument(collection, hex)
-    return "Enter forum here:"+os.environ['FRONT_END_HOST']+"/panel/"+str(hex)
+    # else:
+    #     hex = hashMedia.getMd5Hexa(message.encode('utf-8')) # getting digest from text message
+        collection = database.findCollection(database="comments", collection="comments")  # finding collection
+        if not database.findDocument(collection, hex):  # checking if the media already exist
+            database.insertDocument(collection, hex)
+        return "Enter forum here:"+os.environ['FRONT_END_HOST']+"/panel/"+str(hex)
+    return "THIS IS TEXT"
 
 
 @app.route("/panel")
