@@ -6,7 +6,10 @@ import json
 from twilio.twiml.messaging_response import MessagingResponse
 import requests  # request img from web
 from flask_cors import CORS, cross_origin
-from flask import jsonify
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -54,9 +57,12 @@ def bot():
     if media_url:
         image_string = requests.get(media_url).content
         hex = hashMedia.getMd5Hexa(image_string)  # getting digest
-        return respond(hex)
     else:
-        return respond(f'Please send an image!')
+        hex = hashMedia.getMd5Hexa(message.encode('utf-8')) # getting digest from text message
+    collection = database.findCollection(database="comments", collection="comments")  # finding collection
+    if not database.findDocument(collection, hex):  # checking if the media already exist
+        database.insertDocument(collection, hex)
+    return "Enter forum here:"+os.environ['FRONT_END_HOST']+"/panel/"+str(hex)
 
 
 @app.route("/panel")
